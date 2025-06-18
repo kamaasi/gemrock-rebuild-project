@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, User, Clock, Gavel } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuctionCardProps {
   id: string;
@@ -29,11 +31,36 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   category,
   endTime
 }) => {
+  const { toast } = useToast();
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(price);
+  };
+
+  const handleBuyNow = () => {
+    toast({
+      title: "Buy Now Selected",
+      description: `Processing purchase for ${title} at ${formatPrice(buyNowPrice!)}`,
+    });
+    // Here you would integrate with payment processing
+    console.log(`Buy Now clicked for auction ${id} - Price: ${buyNowPrice}`);
+  };
+
+  const handleJoinLive = () => {
+    if (isLive) {
+      toast({
+        title: "Joining Live Auction",
+        description: `Redirecting to live auction for ${title}`,
+      });
+    } else {
+      toast({
+        title: "Place Bid",
+        description: `Opening bid interface for ${title}`,
+      });
+    }
   };
 
   return (
@@ -96,12 +123,18 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
 
         <div className="flex space-x-2">
           <Link to={`/live-auction/${id}`} className="flex-1">
-            <button className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium">
+            <button 
+              onClick={handleJoinLive}
+              className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+            >
               {isLive ? 'Join Live' : 'Place Bid'}
             </button>
           </Link>
           {buyNowPrice && (
-            <button className="flex-1 border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-medium">
+            <button 
+              onClick={handleBuyNow}
+              className="flex-1 border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-medium"
+            >
               Buy Now
             </button>
           )}
