@@ -12,6 +12,9 @@ import Contact from "./pages/Contact";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
 import Watchlist from "./pages/Watchlist";
+import AdminPanel from "./pages/AdminPanel";
+import UserDashboard from "./pages/UserDashboard";
+import LiveAuction from "./pages/LiveAuction";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +34,9 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/account" element={<Account />} />
           <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/live-auction/:id" element={<LiveAuction />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

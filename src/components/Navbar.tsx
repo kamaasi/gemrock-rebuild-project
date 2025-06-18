@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Link2, User, Eye, Menu, User as UserIcon } from 'lucide-react';
@@ -65,15 +64,21 @@ const Navbar = () => {
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="ghost" size="sm" asChild>
+              <Link to="/dashboard">
+                <UserIcon className="h-4 w-4 mr-2" />
+                Dashboard
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/watchlist">
                 <Eye className="h-4 w-4 mr-2" />
                 Watchlist
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/account">
-                <UserIcon className="h-4 w-4 mr-2" />
-                Account
+              <Link to="/admin">
+                <User className="h-4 w-4 mr-2" />
+                Admin
               </Link>
             </Button>
             <Button size="sm" asChild>
@@ -123,15 +128,21 @@ const Navbar = () => {
               ))}
               <div className="pt-4 border-t border-gray-200 space-y-2">
                 <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                  <Link to="/dashboard">
+                    <UserIcon className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
                   <Link to="/watchlist">
                     <Eye className="h-4 w-4 mr-2" />
                     Watchlist
                   </Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                  <Link to="/account">
-                    <UserIcon className="h-4 w-4 mr-2" />
-                    Account
+                  <Link to="/admin">
+                    <User className="h-4 w-4 mr-2" />
+                    Admin
                   </Link>
                 </Button>
                 <Button size="sm" className="w-full" asChild>

@@ -1,6 +1,6 @@
-
 import React from 'react';
-import { Link2, Eye, User, Link2 as LinkIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Eye, User, Clock, Gavel } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -46,23 +46,24 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
         />
         <div className="absolute top-3 left-3">
           {isLive && (
-            <Badge className="bg-red-500 hover:bg-red-600 text-white">
+            <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+              <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
               LIVE
-            </Badge>
+            </div>
           )}
         </div>
         <div className="absolute top-3 right-3 space-x-2">
-          <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
-            <User className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
-            <Eye className="h-4 w-4" />
-          </Button>
+          <button className="bg-white/90 hover:bg-white p-2 rounded-full transition-colors">
+            <User className="h-4 w-4 text-primary" />
+          </button>
+          <button className="bg-white/90 hover:bg-white p-2 rounded-full transition-colors">
+            <Eye className="h-4 w-4 text-primary" />
+          </button>
         </div>
         <div className="absolute bottom-3 left-3">
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
+          <div className="bg-white/90 text-primary px-3 py-1 rounded-full text-sm font-medium">
             {category}
-          </Badge>
+          </div>
         </div>
       </div>
 
@@ -84,23 +85,25 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
 
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-1">
-            <LinkIcon className="h-4 w-4" />
+            <Gavel className="h-4 w-4" />
             <span>{bidCount} bids</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Link2 className="h-4 w-4" />
+            <Clock className="h-4 w-4" />
             <span>{timeLeft}</span>
           </div>
         </div>
 
         <div className="flex space-x-2">
-          <Button className="flex-1" size="sm">
-            Place Bid
-          </Button>
+          <Link to={`/live-auction/${id}`} className="flex-1">
+            <button className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium">
+              {isLive ? 'Join Live' : 'Place Bid'}
+            </button>
+          </Link>
           {buyNowPrice && (
-            <Button variant="outline" size="sm" className="flex-1">
+            <button className="flex-1 border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-medium">
               Buy Now
-            </Button>
+            </button>
           )}
         </div>
       </div>
