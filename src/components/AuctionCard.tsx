@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Clock, Eye, Heart, Gavel } from 'lucide-react';
+import { Link2, Eye, User, Link2 as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -53,7 +53,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
         </div>
         <div className="absolute top-3 right-3 space-x-2">
           <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
-            <Heart className="h-4 w-4" />
+            <User className="h-4 w-4" />
           </Button>
           <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
             <Eye className="h-4 w-4" />
@@ -72,7 +72,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">Current Bid</p>
-            <p className="text-2xl font-bold text-purple-600">{formatPrice(currentBid)}</p>
+            <p className="text-2xl font-bold text-primary">{formatPrice(currentBid)}</p>
           </div>
           {buyNowPrice && (
             <div className="text-right">
@@ -84,11 +84,11 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
 
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-1">
-            <Gavel className="h-4 w-4" />
+            <LinkIcon className="h-4 w-4" />
             <span>{bidCount} bids</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Clock className="h-4 w-4" />
+            <Link2 className="h-4 w-4" />
             <span>{timeLeft}</span>
           </div>
         </div>
