@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Diamond, Sparkles, Star, Shield, Crown, Gem, Mountain, Zap, Award, Coins, Heart, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ const Categories = () => {
       description: 'Brilliant cut diamonds, fancy colored diamonds, and rare diamond jewelry',
       count: 234,
       icon: Diamond,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1605100804763-247f67b3557e?w=600', // Diamond jewelry
       startingPrice: '$500',
       featured: true
     },
@@ -24,7 +23,7 @@ const Categories = () => {
       description: 'Burmese rubies, Thai rubies, and exceptional ruby jewelry pieces',
       count: 156,
       icon: Sparkles,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1515562141207-7a88fb7ce338?w=600', // Ruby gemstone
       startingPrice: '$300',
       featured: true
     },
@@ -33,7 +32,7 @@ const Categories = () => {
       description: 'Kashmir sapphires, Ceylon sapphires, and fancy colored varieties',
       count: 189,
       icon: Star,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1544441892-794166f1e3be?w=600', // Blue sapphire
       startingPrice: '$250',
       featured: true
     },
@@ -42,7 +41,7 @@ const Categories = () => {
       description: 'Colombian emeralds, Zambian emeralds, and vintage emerald jewelry',
       count: 98,
       icon: Shield,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1602173574767-37ac01994b2a?w=600', // Emerald stone
       startingPrice: '$400',
       featured: true
     },
@@ -53,7 +52,7 @@ const Categories = () => {
       description: 'Purple quartz varieties, geodes, and carved specimens',
       count: 145,
       icon: Crown,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1518709268805-4e9042af2176?w=600', // Amethyst crystal
       startingPrice: '$50'
     },
     {
@@ -61,7 +60,7 @@ const Categories = () => {
       description: 'Blue beryl crystals and aquamarine jewelry',
       count: 87,
       icon: Mountain,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1544441893-675973e31985?w=600', // Aquamarine crystal
       startingPrice: '$75'
     },
     {
@@ -69,7 +68,7 @@ const Categories = () => {
       description: 'Multi-colored tourmaline varieties and bi-color specimens',
       count: 112,
       icon: Zap,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1509652449470-1893fd1d1ec0?w=600', // Tourmaline crystals
       startingPrice: '$80'
     },
     {
@@ -77,7 +76,7 @@ const Categories = () => {
       description: 'Red garnets, demantoid, and rare color varieties',
       count: 93,
       icon: Heart,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1544441892-619b37c5b5ed?w=600', // Red garnet
       startingPrice: '$40'
     },
     {
@@ -85,7 +84,7 @@ const Categories = () => {
       description: 'Yellow and orange quartz varieties and specimens',
       count: 76,
       icon: Coins,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1518709268805-4e9042af2176?w=600', // Yellow citrine
       startingPrice: '$30'
     },
     {
@@ -93,7 +92,7 @@ const Categories = () => {
       description: 'Olivine crystals and peridot jewelry pieces',
       count: 54,
       icon: Globe,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1602173574767-37ac01994b2a?w=600', // Green peridot
       startingPrice: '$45'
     },
     
@@ -103,7 +102,7 @@ const Categories = () => {
       description: 'Specimen minerals, crystals, and unique geological formations',
       count: 324,
       icon: Mountain,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1544441892-794166f1e3be?w=600', // Raw minerals
       startingPrice: '$25'
     },
     {
@@ -111,7 +110,7 @@ const Categories = () => {
       description: 'Uncut gemstones, rough crystals, and raw mineral specimens',
       count: 287,
       icon: Gem,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1509652449470-1893fd1d1ec0?w=600', // Rough stones
       startingPrice: '$15'
     },
     
@@ -121,7 +120,7 @@ const Categories = () => {
       description: 'Clear quartz, smoky quartz, and various quartz formations',
       count: 198,
       icon: Diamond,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1518709268805-4e9042af2176?w=600', // Clear quartz
       startingPrice: '$20'
     },
     {
@@ -129,7 +128,7 @@ const Categories = () => {
       description: 'Banded agate varieties, geodes, and polished specimens',
       count: 165,
       icon: Globe,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1544441893-675973e31985?w=600', // Agate slice
       startingPrice: '$35'
     },
     {
@@ -137,7 +136,7 @@ const Categories = () => {
       description: 'Picture jasper, red jasper, and ornamental varieties',
       count: 142,
       icon: Mountain,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1544441892-619b37c5b5ed?w=600', // Jasper stone
       startingPrice: '$25'
     },
     
@@ -147,7 +146,7 @@ const Categories = () => {
       description: 'Blue-violet zoisite crystals and tanzanite jewelry',
       count: 43,
       icon: Star,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1544441892-794166f1e3be?w=600', // Blue tanzanite
       startingPrice: '$200'
     },
     {
@@ -155,7 +154,7 @@ const Categories = () => {
       description: 'Fire opals, black opals, and boulder opal varieties',
       count: 89,
       icon: Sparkles,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1602173574767-37ac01994b2a?w=600', // Colorful opal
       startingPrice: '$100'
     },
     {
@@ -163,7 +162,7 @@ const Categories = () => {
       description: 'Jadeite and nephrite jade carvings and specimens',
       count: 67,
       icon: Shield,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1602173574767-37ac01994b2a?w=600', // Green jade
       startingPrice: '$150'
     },
     
@@ -173,7 +172,7 @@ const Categories = () => {
       description: 'South Sea pearls, Akoya pearls, and vintage pearl jewelry',
       count: 78,
       icon: Crown,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1605100804763-247f67b3557e?w=600', // Pearl jewelry
       startingPrice: '$100'
     },
     {
@@ -181,7 +180,7 @@ const Categories = () => {
       description: 'Baltic amber, Dominican amber, and fossilized specimens',
       count: 56,
       icon: Coins,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1544441893-675973e31985?w=600', // Amber specimen
       startingPrice: '$75'
     },
     {
@@ -189,7 +188,7 @@ const Categories = () => {
       description: 'Red coral, black coral, and vintage coral jewelry',
       count: 34,
       icon: Heart,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1544441892-619b37c5b5ed?w=600', // Red coral
       startingPrice: '$85'
     },
     
@@ -199,7 +198,7 @@ const Categories = () => {
       description: 'Gemstone rings, vintage rings, and designer pieces',
       count: 456,
       icon: Award,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1605100804763-247f67b3557e?w=600', // Ring collection
       startingPrice: '$200'
     },
     {
@@ -207,7 +206,7 @@ const Categories = () => {
       description: 'Gemstone necklaces, chains, and pendant pieces',
       count: 298,
       icon: Crown,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1515562141207-7a88fb7ce338?w=600', // Necklace jewelry
       startingPrice: '$150'
     },
     {
@@ -215,7 +214,7 @@ const Categories = () => {
       description: 'Stud earrings, drop earrings, and vintage pieces',
       count: 367,
       icon: Sparkles,
-      image: 'photo-1506630448388-4e683c67ddb0?w=600',
+      image: 'photo-1605100804763-247f67b3557e?w=600', // Earring collection
       startingPrice: '$100'
     },
     {
@@ -223,7 +222,7 @@ const Categories = () => {
       description: 'Tennis bracelets, bangles, and charm bracelets',
       count: 234,
       icon: Globe,
-      image: 'photo-1515562141207-7a88fb7ce338?w=600',
+      image: 'photo-1515562141207-7a88fb7ce338?w=600', // Bracelet jewelry
       startingPrice: '$125'
     }
   ];
