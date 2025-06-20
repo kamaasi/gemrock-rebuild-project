@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, User, Clock, Gavel } from 'lucide-react';
+import { Eye, User, Clock, Gavel, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
 interface AuctionCardProps {
   id: string;
@@ -32,6 +33,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   endTime
 }) => {
   const { toast } = useToast();
+  const { addToCart } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -41,12 +43,37 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   };
 
   const handleBuyNow = () => {
+    if (!buyNowPrice) return;
+    
     toast({
-      title: "Buy Now Selected",
-      description: `Processing purchase for ${title} at ${formatPrice(buyNowPrice!)}`,
+      title: "Processing Payment",
+      description: `Processing immediate purchase for ${title} at ${formatPrice(buyNowPrice)}`,
     });
-    // Here you would integrate with payment processing
+
+    // Simulate payment processing
+    setTimeout(() => {
+      toast({
+        title: "Purchase Successful",
+        description: `Successfully purchased ${title} for ${formatPrice(buyNowPrice)}!`,
+      });
+    }, 1500);
+
     console.log(`Buy Now clicked for auction ${id} - Price: ${buyNowPrice}`);
+  };
+
+  const handleAddToCart = () => {
+    if (!buyNowPrice) return;
+
+    const cartItem = {
+      id,
+      title,
+      image,
+      price: buyNowPrice,
+      category,
+      type: 'buy-now' as const
+    };
+
+    addToCart(cartItem);
   };
 
   const handleJoinLive = () => {
@@ -121,21 +148,33 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
           </div>
         </div>
 
-        <div className="flex space-x-2">
-          <Link to={`/live-auction/${id}`} className="flex-1">
-            <button 
-              onClick={handleJoinLive}
-              className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
-            >
-              {isLive ? 'Join Live' : 'Place Bid'}
-            </button>
-          </Link>
+        <div className="space-y-2">
+          <div className="flex space-x-2">
+            <Link to={`/live-auction/${id}`} className="flex-1">
+              <button 
+                onClick={handleJoinLive}
+                className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+              >
+                {isLive ? 'Join Live' : 'Place Bid'}
+              </button>
+            </Link>
+            {buyNowPrice && (
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-medium"
+              >
+                Buy Now
+              </button>
+            )}
+          </div>
+          
           {buyNowPrice && (
             <button 
-              onClick={handleBuyNow}
-              className="flex-1 border border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-medium"
+              onClick={handleAddToCart}
+              className="w-full border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center justify-center space-x-2"
             >
-              Buy Now
+              <ShoppingCart className="h-4 w-4" />
+              <span>Add to Cart</span>
             </button>
           )}
         </div>

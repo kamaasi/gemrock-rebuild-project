@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Search, Filter, Grid, List, Star, Diamond, Sparkles, Shield, Crown, Mountain, Zap, Award, Coins, Heart, Globe, Gem } from 'lucide-react';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AuctionCard from '@/components/AuctionCard';
+import CartNavbarExtension from '@/components/CartNavbarExtension';
 
 const CategoryPage = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
@@ -164,6 +164,7 @@ const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <CartNavbarExtension />
       
       {/* Category Header */}
       <section className="bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-white">
