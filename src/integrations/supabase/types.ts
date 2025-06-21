@@ -9,13 +9,168 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      commission_payouts: {
+        Row: {
+          created_at: string
+          id: string
+          payout_date: string | null
+          payout_status: string
+          seller_id: string
+          total_earnings: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payout_date?: string | null
+          payout_status?: string
+          seller_id: string
+          total_earnings: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payout_date?: string | null
+          payout_status?: string
+          seller_id?: string
+          total_earnings?: number
+        }
+        Relationships: []
+      }
+      membership_plans: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          level: number
+          monthly_item_limit: number
+          name: string
+          price: number
+        }
+        Insert: {
+          commission_rate: number
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          level: number
+          monthly_item_limit: number
+          name: string
+          price: number
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          level?: number
+          monthly_item_limit?: number
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          buyer_id: string | null
+          commission_amount: number
+          commission_rate: number
+          created_at: string
+          id: string
+          item_title: string
+          payment_status: string
+          sale_amount: number
+          seller_earnings: number
+          seller_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          commission_amount: number
+          commission_rate: number
+          created_at?: string
+          id?: string
+          item_title: string
+          payment_status?: string
+          sale_amount: number
+          seller_earnings: number
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          item_title?: string
+          payment_status?: string
+          sale_amount?: number
+          seller_earnings?: number
+          seller_id?: string
+        }
+        Relationships: []
+      }
+      user_memberships: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          items_posted_this_month: number | null
+          plan_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          items_posted_this_month?: number | null
+          plan_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          items_posted_this_month?: number | null
+          plan_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_memberships_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "membership_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_user_post_item: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      reset_monthly_item_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
