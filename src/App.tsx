@@ -17,6 +17,7 @@ import Watchlist from "./pages/Watchlist";
 import AdminPanel from "./pages/AdminPanel";
 import UserDashboard from "./pages/UserDashboard";
 import LiveAuction from "./pages/LiveAuction";
+import Membership from "./pages/Membership";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/membership" element={<Membership />} />
             <Route path="/live-auction/:id" element={<LiveAuction />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
