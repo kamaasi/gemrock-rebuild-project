@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Clock, Eye, Gavel, ShoppingCart, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
 }) => {
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleAddToCart = () => {
     const price = buyNowPrice || currentBid || 0;
@@ -70,6 +71,10 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
       title: "Proceeding to Checkout",
       description: `Processing payment for $${buyNowPrice.toLocaleString()}`,
     });
+  };
+
+  const handleJoinLive = () => {
+    navigate(`/live-auction/${id}`);
   };
 
   return (
@@ -142,7 +147,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
             </Button>
             
             {isLive ? (
-              <Button className="flex-1 bg-red-600 hover:bg-red-700">
+              <Button onClick={handleJoinLive} className="flex-1 bg-red-600 hover:bg-red-700">
                 <Eye className="h-4 w-4 mr-2" />
                 Join Live
               </Button>
