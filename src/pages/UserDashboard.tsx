@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, Package, TrendingUp, DollarSign, Plus, Eye } from 'lucide-react';
+import { User, Package, TrendingUp, DollarSign, Plus, Eye, Gavel } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
