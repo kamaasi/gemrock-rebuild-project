@@ -1,14 +1,23 @@
 
-import React from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Link2, User, Eye, Link2 as LinkIcon, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import AuctionCard from '@/components/AuctionCard';
+import OptimizedAuctionCard from '@/components/OptimizedAuctionCard';
+import SearchBar from '@/components/SearchBar';
+import FilterPanel from '@/components/FilterPanel';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useLocalStorage<string[]>('selectedCategories', []);
+  const [priceRange, setPriceRange] = useLocalStorage('priceRange', { min: 0, max: 1000000 });
+  const [isLoading, setIsLoading] = useState(false);
+
   const featuredAuctions = [
     {
       id: '1',
@@ -54,14 +63,37 @@ const Index = () => {
       bidCount: 33,
       category: 'Diamonds',
       endTime: '2024-06-22T14:45:00Z'
+    },
+    {
+      id: '5',
+      title: 'Vintage Opal Pendant - Ethiopian Fire Opal',
+      image: 'photo-1515562141207-7a88fb7ce338?w=400',
+      currentBid: 3200,
+      buyNowPrice: 4800,
+      timeLeft: '6h 42m',
+      bidCount: 12,
+      category: 'Opals',
+      endTime: '2024-06-25T14:00:00Z'
+    },
+    {
+      id: '6',
+      title: 'Antique Topaz Brooch - Victorian Era',
+      image: 'photo-1506630448388-4e683c67ddb0?w=400',
+      currentBid: 1850,
+      timeLeft: '5d 18h 30m',
+      bidCount: 8,
+      category: 'Topaz',
+      endTime: '2024-06-28T10:30:00Z'
     }
   ];
 
   const categories = [
-    { name: 'Diamonds', count: 234, icon: LinkIcon, image: 'photo-1506630448388-4e683c67ddb0?w=300' },
-    { name: 'Rubies', count: 156, icon: Link2, image: 'photo-1515562141207-7a88fb7ce338?w=300' },
-    { name: 'Sapphires', count: 189, icon: User, image: 'photo-1506630448388-4e683c67ddb0?w=300' },
-    { name: 'Emeralds', count: 98, icon: Eye, image: 'photo-1515562141207-7a88fb7ce338?w=300' },
+    { id: 'diamonds', label: 'Diamonds', count: 234, icon: LinkIcon, image: 'photo-1506630448388-4e683c67ddb0?w=300' },
+    { id: 'rubies', label: 'Rubies', count: 156, icon: Link2, image: 'photo-1515562141207-7a88fb7ce338?w=300' },
+    { id: 'sapphires', label: 'Sapphires', count: 189, icon: User, image: 'photo-1506630448388-4e683c67ddb0?w=300' },
+    { id: 'emeralds', label: 'Emeralds', count: 98, icon: Eye, image: 'photo-1515562141207-7a88fb7ce338?w=300' },
+    { id: 'opals', label: 'Opals', count: 45, icon: User, image: 'photo-1515562141207-7a88fb7ce338?w=300' },
+    { id: 'topaz', label: 'Topaz', count: 67, icon: Eye, image: 'photo-1506630448388-4e683c67ddb0?w=300' },
   ];
 
   const stats = [
@@ -70,6 +102,40 @@ const Index = () => {
     { label: 'Items Sold', value: '234,567', icon: User },
     { label: 'Success Rate', value: '98.5%', icon: Eye },
   ];
+
+  // Memoized filtered auctions for performance
+  const filteredAuctions = useMemo(() => {
+    return featuredAuctions.filter(auction => {
+      const matchesSearch = auction.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          auction.category.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = selectedCategories.length === 0 ||
+                             selectedCategories.includes(auction.category.toLowerCase());
+      
+      const price = auction.buyNowPrice || auction.currentBid || 0;
+      const matchesPrice = price >= priceRange.min && price <= priceRange.max;
+      
+      return matchesSearch && matchesCategory && matchesPrice;
+    });
+  }, [featuredAuctions, searchQuery, selectedCategories, priceRange]);
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
+
+  const handleCategoryChange = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  }, [setSelectedCategories]);
+
+  const handleClearFilters = useCallback(() => {
+    setSelectedCategories([]);
+    setPriceRange({ min: 0, max: 1000000 });
+    setSearchQuery('');
+  }, [setSelectedCategories, setPriceRange]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,6 +187,27 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Search and Filter Section */}
+      <section className="py-8 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1">
+              <SearchBar onSearch={handleSearch} className="w-full" />
+            </div>
+            <div className="lg:w-80">
+              <FilterPanel
+                categories={categories}
+                selectedCategories={selectedCategories}
+                priceRange={priceRange}
+                onCategoryChange={handleCategoryChange}
+                onPriceRangeChange={setPriceRange}
+                onClearFilters={handleClearFilters}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Auctions */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -131,13 +218,35 @@ const Index = () => {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Discover exceptional gemstones and jewelry pieces currently up for auction
             </p>
+            {searchQuery && (
+              <p className="text-sm text-gray-500 mt-2">
+                Showing {filteredAuctions.length} results for "{searchQuery}"
+              </p>
+            )}
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {featuredAuctions.map((auction) => (
-              <AuctionCard key={auction.id} {...auction} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {filteredAuctions.map((auction) => (
+                  <OptimizedAuctionCard key={auction.id} {...auction} />
+                ))}
+              </div>
+              
+              {filteredAuctions.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 mb-4">No auctions match your current filters.</p>
+                  <Button variant="outline" onClick={handleClearFilters}>
+                    Clear Filters
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
           
           <div className="text-center">
             <Button size="lg" variant="outline" asChild>
@@ -162,17 +271,17 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category, index) => (
               <Link
                 key={index}
-                to={`/category/${category.name.toLowerCase()}`}
+                to={`/category/${category.label.toLowerCase()}`}
                 className="group relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
               >
                 <div className="aspect-w-16 aspect-h-12">
                   <img
                     src={`https://images.unsplash.com/${category.image}`}
-                    alt={category.name}
+                    alt={category.label}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
@@ -180,7 +289,7 @@ const Index = () => {
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="flex items-center space-x-2 mb-2">
                     <category.icon className="h-6 w-6 text-white" />
-                    <h3 className="text-xl font-semibold text-white">{category.name}</h3>
+                    <h3 className="text-xl font-semibold text-white">{category.label}</h3>
                   </div>
                   <p className="text-gray-200">{category.count} items</p>
                 </div>
