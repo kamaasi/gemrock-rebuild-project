@@ -1,58 +1,68 @@
 
 import React, { useState, useEffect } from 'react';
-import { Gavel, Users, Clock, DollarSign, Eye, Heart, MessageCircle } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Gavel, Users, Clock, Heart, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import LiveChat from '@/components/LiveChat';
+import BuyNowHandler from '@/components/BuyNowHandler';
+
+interface AuctionItem {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  current_bid: number;
+  buy_now_price: number;
+  starting_bid: number;
+  reserve_price: number;
+  category: string;
+  status: string;
+  bid_count: number;
+  seller_id: string;
+  profiles: {
+    full_name: string;
+    email: string;
+  };
+}
+
+interface Bid {
+  id: string;
+  amount: number;
+  created_at: string;
+  profiles: {
+    full_name: string;
+  };
+}
 
 const LiveAuction = () => {
-  const [currentBid, setCurrentBid] = useState(15750);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const [auctionItem, setAuctionItem] = useState<AuctionItem | null>(null);
+  const [currentBid, setCurrentBid] = useState(0);
   const [bidAmount, setBidAmount] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 34, seconds: 45 });
   const [watchers, setWatchers] = useState(127);
-  const [totalBids, setTotalBids] = useState(34);
+  const [totalBids, setTotalBids] = useState(0);
+  const [recentBids, setRecentBids] = useState<Bid[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const auctionItem = {
-    id: 1,
-    title: 'Exceptional Pink Sapphire Ring - 4.23 Carats',
-    description: 'A magnificent pink sapphire ring featuring a cushion-cut Ceylon sapphire of exceptional clarity and color. The stone displays a vivid pink hue with excellent transparency. Set in 18k white gold with accent diamonds totaling 0.85 carats.',
-    images: [
-      'photo-1515562141207-7a88fb7ce338?w=600',
-      'photo-1506630448388-4e683c67ddb0?w=600',
-      'photo-1515562141207-7a88fb7ce338?w=600'
-    ],
-    seller: 'Premium Gemstones Ltd.',
-    startingBid: 8000,
-    buyNowPrice: 25000,
-    reserve: 12000,
-    category: 'Sapphires',
-    certification: 'GIA Certified',
-    specifications: {
-      weight: '4.23 carats',
-      cut: 'Cushion',
-      color: 'Vivid Pink',
-      clarity: 'VS1',
-      origin: 'Ceylon (Sri Lanka)',
-      treatment: 'Heat only'
+  useEffect(() => {
+    if (id) {
+      fetchAuctionItem();
+      fetchRecentBids();
+      checkUser();
+      subscribeToNewBids();
     }
-  };
-
-  const recentBids = [
-    { id: 1, bidder: 'Collector***', amount: 15750, time: '30 seconds ago' },
-    { id: 2, bidder: 'GemLover**', amount: 15500, time: '2 minutes ago' },
-    { id: 3, bidder: 'DiamondD***', amount: 15250, time: '4 minutes ago' },
-    { id: 4, bidder: 'Investor*', amount: 15000, time: '6 minutes ago' },
-    { id: 5, bidder: 'RubyRed**', amount: 14750, time: '8 minutes ago' }
-  ];
-
-  const chatMessages = [
-    { id: 1, user: 'GemExpert', message: 'Beautiful color saturation!', time: '1m' },
-    { id: 2, user: 'Collector', message: 'Is this heated or natural?', time: '2m' },
-    { id: 3, user: 'Auctioneer', message: 'Heat treated only, as stated in description', time: '2m' },
-    { id: 4, user: 'PinkLover', message: 'Stunning piece!', time: '3m' }
-  ];
+  }, [id]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -71,14 +81,199 @@ const LiveAuction = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handlePlaceBid = () => {
-    const bid = parseFloat(bidAmount);
-    if (bid > currentBid) {
-      setCurrentBid(bid);
-      setTotalBids(prev => prev + 1);
-      setBidAmount('');
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      setCurrentUser(profile);
     }
   };
+
+  const fetchAuctionItem = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('auction_items')
+        .select(`
+          *,
+          profiles!auction_items_seller_id_fkey (
+            full_name,
+            email
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setAuctionItem(data);
+        setCurrentBid(data.current_bid || data.starting_bid || 0);
+        setTotalBids(data.bid_count || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching auction item:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load auction item",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchRecentBids = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bids')
+        .select(`
+          *,
+          profiles (
+            full_name
+          )
+        `)
+        .eq('auction_id', id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setRecentBids(data || []);
+    } catch (error) {
+      console.error('Error fetching bids:', error);
+    }
+  };
+
+  const subscribeToNewBids = () => {
+    const channel = supabase
+      .channel('auction-bids')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'bids',
+          filter: `auction_id=eq.${id}`
+        },
+        async (payload) => {
+          // Fetch the new bid with profile data
+          const { data } = await supabase
+            .from('bids')
+            .select(`
+              *,
+              profiles (
+                full_name
+              )
+            `)
+            .eq('id', payload.new.id)
+            .single();
+
+          if (data) {
+            setCurrentBid(data.amount);
+            setTotalBids(prev => prev + 1);
+            setRecentBids(prev => [data, ...prev.slice(0, 4)]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const handlePlaceBid = async () => {
+    if (!currentUser) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to place a bid",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const bid = parseFloat(bidAmount);
+    if (bid <= currentBid) {
+      toast({
+        title: "Invalid Bid",
+        description: "Bid must be higher than current bid",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('bids')
+        .insert({
+          auction_id: id,
+          bidder_id: currentUser.id,
+          amount: bid
+        });
+
+      if (error) throw error;
+
+      // Update auction item's current bid
+      await supabase
+        .from('auction_items')
+        .update({ 
+          current_bid: bid,
+          bid_count: totalBids + 1
+        })
+        .eq('id', id);
+
+      setBidAmount('');
+      
+      toast({
+        title: "Bid Placed Successfully",
+        description: `Your bid of $${bid.toLocaleString()} has been placed`,
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Bid Failed",
+        description: error.message || "Failed to place bid",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handlePurchaseComplete = () => {
+    toast({
+      title: "Purchase Complete",
+      description: "Redirecting to your purchases...",
+    });
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 2000);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">Loading auction...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!auctionItem) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">Auction not found</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const suggestedBids = [
     currentBid + 250,
@@ -95,7 +290,7 @@ const LiveAuction = () => {
         <div className="mb-6">
           <Badge className="bg-red-500 hover:bg-red-600 text-white text-lg px-4 py-2">
             <div className="w-3 h-3 bg-white rounded-full mr-3 animate-pulse"></div>
-            LIVE AUCTION
+            {auctionItem.status === 'live' ? 'LIVE AUCTION' : 'AUCTION'}
           </Badge>
         </div>
 
@@ -107,22 +302,22 @@ const LiveAuction = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <img
-                    src={`https://images.unsplash.com/${auctionItem.images[0]}`}
+                    src={`https://images.unsplash.com/${auctionItem.images?.[0] || 'photo-1515562141207-7a88fb7ce338?w=600'}`}
                     alt={auctionItem.title}
                     className="w-full h-96 object-cover rounded-lg"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {auctionItem.images.slice(1).map((image, index) => (
+                  {[1, 2].map((index) => (
                     <img
                       key={index}
-                      src={`https://images.unsplash.com/${image}`}
-                      alt={`${auctionItem.title} ${index + 2}`}
+                      src={`https://images.unsplash.com/${auctionItem.images?.[index] || 'photo-1506630448388-4e683c67ddb0?w=600'}`}
+                      alt={`${auctionItem.title} ${index + 1}`}
                       className="w-full h-44 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
                     />
                   ))}
                   <div className="bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
-                    +5 more
+                    +{(auctionItem.images?.length || 2) - 2} more
                   </div>
                 </div>
               </div>
@@ -133,7 +328,7 @@ const LiveAuction = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">{auctionItem.title}</h1>
-                  <p className="text-gray-600">Sold by: {auctionItem.seller}</p>
+                  <p className="text-gray-600">Sold by: {auctionItem.profiles?.full_name || 'Anonymous Seller'}</p>
                 </div>
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
@@ -147,21 +342,13 @@ const LiveAuction = () => {
 
               <p className="text-gray-700 mb-6">{auctionItem.description}</p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {Object.entries(auctionItem.specifications).map(([key, value]) => (
-                  <div key={key} className="bg-gray-50 p-3 rounded">
-                    <p className="text-sm text-gray-500 capitalize">{key}</p>
-                    <p className="font-semibold">{value}</p>
-                  </div>
-                ))}
-              </div>
-
               <div className="mt-6 pt-6 border-t">
                 <Badge className="bg-green-100 text-green-800 mb-2">
-                  {auctionItem.certification}
+                  Verified Gemstone
                 </Badge>
                 <p className="text-sm text-gray-600">
-                  Reserve price: ${auctionItem.reserve.toLocaleString()} (Met)
+                  Reserve price: ${auctionItem.reserve_price?.toLocaleString() || 'Not disclosed'} 
+                  {currentBid >= (auctionItem.reserve_price || 0) ? ' (Met)' : ' (Not met)'}
                 </p>
               </div>
             </div>
@@ -233,10 +420,15 @@ const LiveAuction = () => {
                     Place Bid
                   </Button>
 
-                  <Button variant="outline" className="w-full">
-                    <DollarSign className="h-4 w-4 mr-2" />
-                    Buy Now - ${auctionItem.buyNowPrice.toLocaleString()}
-                  </Button>
+                  {auctionItem.buy_now_price && (
+                    <BuyNowHandler
+                      auctionId={auctionItem.id}
+                      buyNowPrice={auctionItem.buy_now_price}
+                      itemTitle={auctionItem.title}
+                      sellerId={auctionItem.seller_id}
+                      onPurchaseComplete={handlePurchaseComplete}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -245,42 +437,28 @@ const LiveAuction = () => {
             <div className="bg-white rounded-lg shadow-lg border p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Bids</h3>
               <div className="space-y-3">
-                {recentBids.map((bid) => (
-                  <div key={bid.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                    <div>
-                      <p className="font-semibold">{bid.bidder}</p>
-                      <p className="text-sm text-gray-500">{bid.time}</p>
+                {recentBids.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No bids yet</p>
+                ) : (
+                  recentBids.map((bid) => (
+                    <div key={bid.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                      <div>
+                        <p className="font-semibold">{bid.profiles?.full_name || 'Anonymous'}</p>
+                        <p className="text-sm text-gray-500">
+                          {new Date(bid.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <span className="font-bold text-primary">
+                        ${bid.amount.toLocaleString()}
+                      </span>
                     </div>
-                    <span className="font-bold text-primary">
-                      ${bid.amount.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
             {/* Live Chat */}
-            <div className="bg-white rounded-lg shadow-lg border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <MessageCircle className="h-5 w-5 mr-2" />
-                Live Chat
-              </h3>
-              <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                {chatMessages.map((message) => (
-                  <div key={message.id} className="text-sm">
-                    <div className="flex justify-between items-start">
-                      <span className="font-semibold text-primary">{message.user}:</span>
-                      <span className="text-gray-400 text-xs">{message.time}</span>
-                    </div>
-                    <p className="text-gray-700">{message.message}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex space-x-2">
-                <Input placeholder="Type a message..." className="flex-1" />
-                <Button size="sm">Send</Button>
-              </div>
-            </div>
+            <LiveChat auctionId={auctionItem.id} />
           </div>
         </div>
       </div>
