@@ -249,28 +249,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Search and Filter Section */}
-      <section className="py-8 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1">
-              <SearchBar onSearch={handleSearch} className="w-full" />
-            </div>
-            <div className="lg:w-80">
-              <FilterPanel
-                categories={categories}
-                selectedCategories={selectedCategories}
-                priceRange={priceRange}
-                onCategoryChange={handleCategoryChange}
-                onPriceRangeChange={setPriceRange}
-                onClearFilters={handleClearFilters}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Auctions */}
+      {/* Featured Auctions with Integrated Search and Filters */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -280,8 +259,31 @@ const Index = () => {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Discover exceptional gemstones and jewelry pieces currently up for auction
             </p>
+          </div>
+
+          {/* Search and Horizontal Filters */}
+          <div className="mb-8 space-y-4">
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <SearchBar onSearch={handleSearch} className="w-full" />
+            </div>
+            
+            {/* Horizontal Filter Panel */}
+            <div className="max-w-4xl mx-auto">
+              <FilterPanel
+                categories={categories}
+                selectedCategories={selectedCategories}
+                priceRange={priceRange}
+                onCategoryChange={handleCategoryChange}
+                onPriceRangeChange={setPriceRange}
+                onClearFilters={handleClearFilters}
+                className="w-full"
+              />
+            </div>
+
+            {/* Search Results Info */}
             {searchQuery && (
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 text-center">
                 Showing {filteredAuctions.length} results for "{searchQuery}"
               </p>
             )}

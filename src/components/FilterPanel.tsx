@@ -57,7 +57,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Active Filters */}
         {activeFiltersCount > 0 && (
           <div className="space-y-2">
@@ -88,45 +88,48 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           </div>
         )}
 
-        {/* Categories */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">Categories</h4>
-          <div className="space-y-2">
-            {categories.map(category => (
-              <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category.id)}
-                  onChange={() => onCategoryChange(category.id)}
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="text-sm flex-1">{category.label}</span>
-                {category.count !== undefined && (
-                  <span className="text-xs text-gray-500">({category.count})</span>
-                )}
-              </label>
-            ))}
+        {/* Horizontal Layout for Categories and Price Range */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Categories */}
+          <div className="flex-1 space-y-3">
+            <h4 className="text-sm font-medium">Categories</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+              {categories.map(category => (
+                <label key={category.id} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => onCategoryChange(category.id)}
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm truncate block">{category.label}</span>
+                    {category.count !== undefined && (
+                      <span className="text-xs text-gray-500">({category.count})</span>
+                    )}
+                  </div>
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Price Range */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">Price Range</h4>
-          <div className="space-y-2">
+          {/* Price Range */}
+          <div className="lg:w-64 space-y-3">
+            <h4 className="text-sm font-medium">Price Range</h4>
             <div className="flex space-x-2">
               <input
                 type="number"
                 placeholder="Min"
                 value={priceRange.min || ''}
                 onChange={(e) => onPriceRangeChange({ ...priceRange, min: Number(e.target.value) || 0 })}
-                className="w-full px-3 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary outline-none"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={priceRange.max === 1000000 ? '' : priceRange.max}
                 onChange={(e) => onPriceRangeChange({ ...priceRange, max: Number(e.target.value) || 1000000 })}
-                className="w-full px-3 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary outline-none"
               />
             </div>
           </div>
