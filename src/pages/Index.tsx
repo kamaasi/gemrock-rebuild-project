@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Link2, User, Eye, Link2 as LinkIcon, User as UserIcon } from 'lucide-react';
@@ -187,6 +186,69 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Categories Section - Redesigned */}
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Browse by Category
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Explore our curated collection of precious stones and jewelry from around the world
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {categories.map((category, index) => (
+              <Link
+                key={index}
+                to={`/category/${category.label.toLowerCase()}`}
+                className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100"
+              >
+                {/* Image Container with Fixed Aspect Ratio */}
+                <div className="relative h-64 overflow-hidden rounded-t-2xl">
+                  <img
+                    src={`https://images.unsplash.com/${category.image}`}
+                    alt={category.label}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                  
+                  {/* Icon Badge */}
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
+                    <category.icon className="h-6 w-6 text-primary" />
+                  </div>
+                </div>
+                
+                {/* Content Container */}
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+                      {category.label}
+                    </h3>
+                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                      {category.count}
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm mb-4">
+                    Discover {category.count} premium {category.label.toLowerCase()} pieces
+                  </p>
+                  
+                  <div className="flex items-center text-primary font-medium text-sm group-hover:text-primary/80 transition-colors">
+                    Explore Collection
+                    <Link2 className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Search and Filter Section */}
       <section className="py-8 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -255,46 +317,6 @@ const Index = () => {
                 <Link2 className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Browse by Category
-            </h2>
-            <p className="text-xl text-gray-600">
-              Explore our curated collection of precious stones and jewelry
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                to={`/category/${category.label.toLowerCase()}`}
-                className="group relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
-                <div className="aspect-w-16 aspect-h-12">
-                  <img
-                    src={`https://images.unsplash.com/${category.image}`}
-                    alt={category.label}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-black/40"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <category.icon className="h-6 w-6 text-white" />
-                    <h3 className="text-xl font-semibold text-white">{category.label}</h3>
-                  </div>
-                  <p className="text-gray-200">{category.count} items</p>
-                </div>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
